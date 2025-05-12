@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retirement Corpus Calculator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f7f9fc;
+        }
+        .calculator {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-top: 0;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f0f7ff;
+            border-radius: 6px;
+            border-left: 5px solid #3498db;
+        }
+        .result h2 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        .result-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #3498db;
+        }
+        .error {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        .how-it-works {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        .how-it-works h2 {
+            color: #2c3e50;
+        }
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h1>Retirement Corpus Calculator</h1>
+        <div class="form-group">
+            <label for="targetCorpus">Target Corpus (₹)</label>
+            <input type="number" id="targetCorpus" min="0" step="100000" placeholder="E.g., 10000000">
+            <div id="targetCorpusError" class="error"></div>
+        </div>
+        <div class="form-group">
+            <label for="annualReturn">Expected Annual Return (%)</label>
+            <input type="number" id="annualReturn" min="0" max="100" step="0.1" placeholder="E.g., 8">
+            <div id="annualReturnError" class="error"></div>
+        </div>
+        <div class="form-group">
+            <label for="timePeriod">Time Period (Years)</label>
+            <input type="number" id="timePeriod" min="1" max="100" step="1" placeholder="E.g., 30">
+            <div id="timePeriodError" class="error"></div>
+        </div>
+        <button id="calculate">Calculate Monthly Investment</button>
+        
+        <div id="result" class="result" style="display: none;">
+            <h2>Required Monthly Investment</h2>
+            <div class="result-value" id="monthlyInvestment"></div>
+        </div>
+    </div>
+    
+    <div class="how-it-works">
+        <h2>How It Works</h2>
+        <p>This calculator uses the formula for calculating the monthly SIP (Systematic Investment Plan) needed to reach a target corpus:</p>
+        <p><strong>Monthly Investment = P × r / ((1 + r)^n - 1) × (1 + r)</strong></p>
+        <p>Where:</p>
+        <ul>
+            <li><strong>P</strong> = Target corpus amount</li>
+            <li><strong>r</strong> = Monthly rate of return (Annual return ÷ 12 ÷ 100)</li>
+            <li><strong>n</strong> = Total number of months (Years × 12)</li>
+        </ul>
+        <p>Example: For a target corpus of ₹1,00,00,000 (1 crore), annual return of 8%, and time period of 30 years, the required monthly investment would be approximately ₹5,363.</p>
+    </div>
+    
+    <footer>
+        <p>Created with ❤️ | <a href="https://github.com/yourusername/retirement-calculator" target="_blank">GitHub Repository</a></p>
+    </footer>
+
+    <script>
+        document.getElementById('calculate').addEventListener('click', function() {
+            // Reset errors
+            document.getElementById('targetCorpusError').textContent = '';
+            document.getElementById('annualReturnError').textContent = '';
+            document.getElementById('timePeriodError').textContent = '';
+            
+            // Get values from inputs
+            const targetCorpus = parseFloat(document.getElementById('targetCorpus').value);
+            const annualReturn = parseFloat(document.getElementById('annualReturn').value);
+            const timePeriod = parseFloat(document.getElementById('timePeriod').value);
+            
+            // Validate inputs
+            let isValid = true;
+            
+            if (isNaN(targetCorpus) || targetCorpus <= 0) {
+                document.getElementById('targetCorpusError').textContent = 'Please enter a valid target corpus amount.';
+                isValid = false;
+            }
+            
+            if (isNaN(annualReturn) || annualReturn <= 0 || annualReturn > 100) {
+                document.getElementById('annualReturnError').textContent = 'Please enter a valid annual return between 0 and 100.';
+                isValid = false;
+            }
+            
+            if (isNaN(timePeriod) || timePeriod <= 0 || timePeriod > 100) {
+                document.getElementById('timePeriodError').textContent = 'Please enter a valid time period between 1 and 100 years.';
+                isValid = false;
+            }
+            
+            if (!isValid) return;
+            
+            // Calculate monthly investment
+            const monthlyReturn = annualReturn / 12 / 100; // Convert annual return to monthly decimal
+            const totalMonths = timePeriod * 12;
+            
+            // Formula: M = P × r / ((1 + r)^n - 1) × (1 + r)
+            // Where M is monthly investment, P is target corpus, r is monthly rate, n is number of months
+            const monthlyInvestment = targetCorpus * monthlyReturn / ((Math.pow(1 + monthlyReturn, totalMonths) - 1) * (1 + monthlyReturn));
+            
+            // Display result
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('monthlyInvestment').textContent = '₹' + monthlyInvestment.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        });
+    </script>
+</body>
+</html>
